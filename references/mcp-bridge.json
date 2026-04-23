@@ -1,0 +1,440 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "generated": "2026-04-23",
+    "purpose": "Map every MCP connected to your Claude Code to its Managed Agents (MA) equivalent.",
+    "categories": {
+      "A": "Auto-transferable (remote URL + static bearer, pushed automatically)",
+      "B": "OAuth-required (one-shot browser auth, cannot pull token from local)",
+      "C": "Stdio/local only (cannot move to MA, stays on Mac)",
+      "D": "Redundant — covered by Rube/Composio once Rube MCP connected"
+    },
+    "notes": "MA requires remote (streamable HTTP) MCP only. Unverified URLs are flagged with 'ma_url_verified': false."
+  },
+
+  "gohighlevel-official": {
+    "mac_source": ".claude.json:mcpServers.ghl-official",
+    "mac_type": "http",
+    "ma_url": "https://services.leadconnectorhq.com/mcp/",
+    "ma_url_verified": true,
+    "auth_type": "static_bearer",
+    "extra_headers": {"locationId": "<YOUR_GHL_LOCATION_ID>"},
+    "local_token_source": "inline:.claude.json:mcpServers.ghl-official.headers.Authorization || keychain:ghl-pit || env:GHL_PIT_TOKEN",
+    "category": "A",
+    "rube_covers": false,
+    "notes": "PIT token, scoped to location <YOUR_GHL_LOCATION_ID>. Primary GHL access path."
+  },
+
+  "gohighlevel-community": {
+    "mac_source": ".claude.json:mcpServers.ghl-community",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "n/a",
+    "category": "D",
+    "rube_covers": false,
+    "superseded_by": "gohighlevel-official",
+    "notes": "@drausal/gohighlevel-mcp is stdio-only. 400+ tools overlap with official GHL MCP. Drop in MA — use official only."
+  },
+
+  "supabase-agents": {
+    "mac_source": ".claude.json:projects.<YOUR_HOME>.mcpServers.supabase",
+    "mac_type": "stdio",
+    "ma_url": "https://mcp.supabase.com/mcp?project_ref=<YOUR_SUPABASE_PROJECT>",
+    "ma_url_verified": true,
+    "auth_type": "static_bearer",
+    "local_token_source": "inline:.claude.json:supabase.args (anon key) || env:SUPABASE_SERVICE_ROLE_KEY (preferred for MA)",
+    "category": "A",
+    "rube_covers": false,
+    "notes": "Local uses anon key via stdio. MA should use SERVICE ROLE key (server-side) for full agent capability. Prompt the user if service role not in keychain."
+  },
+
+  "supabase-content-engine": {
+    "mac_source": "memory:content-engine-supabase.md",
+    "mac_type": "stdio",
+    "ma_url": "https://mcp.supabase.com/mcp?project_ref=<YOUR_SUPABASE_PROJECT>",
+    "ma_url_verified": true,
+    "auth_type": "static_bearer",
+    "local_token_source": "keychain:supabase-content-engine-service-role || env:SUPABASE_CONTENT_ENGINE_SERVICE_KEY",
+    "category": "A",
+    "rube_covers": false,
+    "notes": "Second Supabase project (dedicated content engine)."
+  },
+
+  "framer": {
+    "mac_source": ".claude.json:projects.<YOUR_HOME>.mcpServers.framer-mcp",
+    "mac_type": "http",
+    "ma_url": "https://mcp.unframer.co/mcp?id=3640a5fe5ac76dad06ddec1f88448614814f05688e4e3796e4d23a84f1515571&secret=uQ1qmVsxbSsOyWgg63kpMJ6Nm2bktmbr",
+    "ma_url_verified": true,
+    "auth_type": "url_embedded",
+    "local_token_source": "inline:framer-mcp.url",
+    "category": "A",
+    "rube_covers": false,
+    "notes": "Secret embedded in URL. Push full URL as-is; MA does not add Authorization header."
+  },
+
+  "rube": {
+    "mac_source": ".claude.json:projects.<YOUR_HOME>.mcpServers.rube",
+    "mac_type": "http",
+    "ma_url": "https://rube.app/mcp",
+    "ma_url_verified": true,
+    "auth_type": "mcp_oauth",
+    "local_token_source": "oauth_flow",
+    "category": "B",
+    "rube_covers": true,
+    "notes": "Rube is the umbrella — gives MA agents Slack/HubSpot/Gmail/Canva/Google Drive/Google Sheets/Google Calendar/Stripe/GitHub/LinkedIn/Twitter/Reddit/Shopify/Telegram/YouTube/Instagram/Make/Notion automation via Composio. One OAuth, all covered. PRIORITY ONE."
+  },
+
+  "notebooklm": {
+    "mac_source": ".claude.json:projects.<YOUR_HOME>.mcpServers.notebooklm",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "n/a",
+    "category": "C",
+    "rube_covers": false,
+    "notes": "notebooklm-mcp drives a local Chrome with Google auth cookies. No remote equivalent exists. Stays on Mac."
+  },
+
+  "stitch-mcp": {
+    "mac_source": ".claude.json:projects.<YOUR_HOME>.mcpServers.stitch-mcp",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "n/a",
+    "category": "C",
+    "rube_covers": false,
+    "notes": "Google Stitch UI design, stdio only. No remote MCP. Stays on Mac."
+  },
+
+  "playwright": {
+    "mac_source": ".claude.json:mcpServers.playwright",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "n/a",
+    "category": "C",
+    "rube_covers": false,
+    "notes": "Needs local Chromium + user-data-dir. Cannot run in MA. For MA use Browserbase/Browserless via Rube if browser automation needed."
+  },
+
+  "nano-banana": {
+    "mac_source": ".claude.json:mcpServers.nano-banana",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "n/a",
+    "category": "C",
+    "rube_covers": false,
+    "notes": "Image gen, stdio only. Use Replicate/Fal remote MCP or image-gen via Rube."
+  },
+
+  "meta-ads": {
+    "mac_source": ".mcp.json:meta-ads AND .claude/projects/<YOUR_PROJECT_KEY>/.mcp.json:meta-ads",
+    "mac_type": "stdio",
+    "ma_url": "https://mcp.pipeboard.co/meta-ads-mcp",
+    "ma_url_verified": false,
+    "auth_type": "static_bearer",
+    "local_token_source": "inline:.mcp.json:meta-ads.env.META_ACCESS_TOKEN",
+    "local_extra": {"META_AD_ACCOUNT_ID": "act_491282504733048"},
+    "category": "A",
+    "rube_covers": false,
+    "notes": "FLAGGED: pipeboard.co/meta-ads is the known remote deployment. Verify before production. Long-lived token in local env — safe to push."
+  },
+
+  "manychat": {
+    "mac_source": ".claude.json:mcpServers.manychat",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "static_bearer",
+    "local_token_source": "keychain:manychat-api-key || env:MANYCHAT_API_KEY",
+    "category": "D",
+    "rube_covers": false,
+    "notes": "FLAGGED: no public remote ManyChat MCP URL found. Options: (1) deploy fabienbutz/manychat-mcp as HTTP on your AWS server (<YOUR_SERVER_IP>), (2) use ManyChat REST directly via Rube custom tool. Stays local for now."
+  },
+
+  "apify": {
+    "mac_source": ".claude.json:mcpServers.apify",
+    "mac_type": "stdio",
+    "ma_url": "https://actors-mcp-server.apify.actor/sse",
+    "ma_url_verified": false,
+    "auth_type": "static_bearer",
+    "local_token_source": "keychain:apify-api-token || env:APIFY_API_TOKEN",
+    "category": "A",
+    "rube_covers": false,
+    "notes": "Apify publishes a hosted actors-mcp-server. Verify URL at https://docs.apify.com/platform/integrations/mcp. Needs APIFY_API_TOKEN bearer."
+  },
+
+  "socialapi": {
+    "mac_source": ".claude.json:mcpServers.socialapi",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "static_bearer",
+    "local_token_source": "keychain:socialapi-key || env:SOCIALAPI_KEY",
+    "category": "C",
+    "rube_covers": false,
+    "notes": "FLAGGED: no remote MCP URL found for mcp-socialapi. Deploy as HTTP on server or stays local."
+  },
+
+  "viral-transformer": {
+    "mac_source": ".claude.json:mcpServers.viral-transformer",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "n/a",
+    "category": "C",
+    "rube_covers": false,
+    "notes": "Local Python MCP at ~/mcp-servers/mcp-viral-transformer. Would need server deployment."
+  },
+
+  "social-trends-local": {
+    "mac_source": ".claude.json:mcpServers.social-trends",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "n/a",
+    "category": "D",
+    "rube_covers": false,
+    "superseded_by": "trends-mcp-remote",
+    "notes": "Local yt_dlp scraper. Overlaps with trends-mcp-remote. Drop in MA."
+  },
+
+  "trends-mcp-remote": {
+    "mac_source": ".claude.json:mcpServers.trends-mcp",
+    "mac_type": "http",
+    "ma_url": "https://api.trendsmcp.ai/mcp",
+    "ma_url_verified": true,
+    "auth_type": "none_or_bearer",
+    "local_token_source": "none (public) OR keychain:trends-mcp-key if paid tier",
+    "category": "A",
+    "rube_covers": false,
+    "notes": "Hosted trends MCP. Check if auth required on paid tier."
+  },
+
+  "n8n": {
+    "mac_source": ".claude/projects/<YOUR_PROJECT_KEY>/.mcp.json:n8n",
+    "mac_type": "stdio",
+    "ma_url": "https://<your-n8n-domain>/mcp",
+    "ma_url_verified": false,
+    "auth_type": "static_bearer",
+    "local_token_source": "inline:.claude/projects/<YOUR_PROJECT_KEY>/.mcp.json:n8n.env.N8N_API_KEY",
+    "category": "A",
+    "rube_covers": false,
+    "notes": "FLAGGED: n8n-mcp is stdio locally. your n8n cloud instance may expose /mcp via community node. Test URL. If 404, deploy n8n-mcp HTTP shim on AWS."
+  },
+
+  "xero-primary": {
+    "mac_source": ".claude/projects/<YOUR_PROJECT_KEY>/.mcp.json:xero-primary",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "oauth2_refresh",
+    "local_token_source": "oauth_flow + client_id/secret in .mcp.json",
+    "category": "B",
+    "rube_covers": false,
+    "notes": "Xero OAuth2 with refresh. MA needs mcp_oauth block with client_id, client_secret, refresh_token, token_endpoint. Use xero-mcp-setup skill for one-shot flow."
+  },
+
+  "xero-second-tenant": {
+    "mac_source": ".claude/projects/<YOUR_PROJECT_KEY>/.mcp.json:xero-second-tenant",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "oauth2_refresh",
+    "local_token_source": "oauth_flow",
+    "category": "B",
+    "rube_covers": false,
+    "notes": "Second Xero tenant (example of multi-tenant). Separate vault entry."
+  },
+
+  "loom-transcript": {
+    "mac_source": ".claude/projects/<YOUR_PROJECT_KEY>/.mcp.json:loom-transcript",
+    "mac_type": "stdio",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "n/a",
+    "category": "C",
+    "rube_covers": false,
+    "notes": "Local CLI binary. No remote MCP. Stays on Mac."
+  },
+
+  "claude-ai-native-notion": {
+    "mac_source": "claude.ai-native (mcp__plugin_Notion_notion__*)",
+    "mac_type": "remote-oauth",
+    "ma_url": "https://mcp.notion.com/mcp",
+    "ma_url_verified": true,
+    "auth_type": "mcp_oauth",
+    "local_token_source": "oauth_flow",
+    "category": "B",
+    "rube_covers": true,
+    "notes": "Rube covers Notion via Composio. Skip unless direct Notion MCP preferred."
+  },
+
+  "claude-ai-native-gmail": {
+    "mac_source": "claude.ai-native (mcp__claude_ai_Gmail__*)",
+    "mac_type": "remote-oauth",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "local_token_source": "oauth_flow",
+    "category": "D",
+    "rube_covers": true,
+    "notes": "No standalone Gmail MCP. Use Rube (has Gmail via Composio) or Google Workspace OAuth MCP. Covered by Rube."
+  },
+
+  "claude-ai-native-calendar": {
+    "mac_source": "claude.ai-native (mcp__claude_ai_Google_Calendar__*)",
+    "mac_type": "remote-oauth",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "category": "D",
+    "rube_covers": true,
+    "notes": "Covered by Rube."
+  },
+
+  "claude-ai-native-gdrive": {
+    "mac_source": "claude.ai-native (mcp__claude_ai_Google_Drive__*)",
+    "mac_type": "remote-oauth",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "category": "D",
+    "rube_covers": true,
+    "notes": "Covered by Rube."
+  },
+
+  "claude-ai-native-airtable": {
+    "mac_source": "claude.ai-native (mcp__claude_ai_Airtable__*)",
+    "mac_type": "remote-oauth",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "category": "D",
+    "rube_covers": true
+  },
+
+  "claude-ai-native-canva": {
+    "mac_source": "claude.ai-native (mcp__claude_ai_Canva__*)",
+    "mac_type": "remote-oauth",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "category": "D",
+    "rube_covers": true
+  },
+
+  "claude-ai-native-linear": {
+    "mac_source": "claude.ai-native (mcp__claude_ai_Linear__*)",
+    "mac_type": "remote-oauth",
+    "ma_url": "https://mcp.linear.app/mcp",
+    "ma_url_verified": true,
+    "auth_type": "static_bearer",
+    "local_token_source": "keychain:linear-api-key || env:LINEAR_API_KEY",
+    "category": "A",
+    "rube_covers": false,
+    "notes": "Linear publishes direct remote MCP. Prefer over Rube for Linear-heavy work."
+  },
+
+  "claude-ai-native-zapier": {
+    "mac_source": "claude.ai-native (mcp__claude_ai_Zapier__*)",
+    "mac_type": "remote-oauth",
+    "ma_url": "https://actions.zapier.com/mcp",
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "category": "D",
+    "rube_covers": true,
+    "notes": "Rube (Composio) is strictly better for SaaS automation. Skip."
+  },
+
+  "claude-ai-native-n8n": {
+    "mac_source": "claude.ai-native (mcp__claude_ai_n8n__*)",
+    "mac_type": "remote-oauth",
+    "ma_url": "https://<your-n8n-domain>/mcp",
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "category": "B",
+    "rube_covers": false,
+    "notes": "Duplicate of 'n8n' entry above — pick one path."
+  },
+
+  "plugin-atlassian": {
+    "mac_source": "claude.ai-native (mcp__plugin_atlassian_*)",
+    "mac_type": "remote-oauth",
+    "ma_url": "https://mcp.atlassian.com",
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "category": "B",
+    "rube_covers": false,
+    "notes": "Atlassian Cloud OAuth. Use if Jira/Confluence needed in MA."
+  },
+
+  "plugin-figma": {
+    "mac_source": "claude.ai-native (mcp__plugin_figma_*)",
+    "mac_type": "remote-oauth",
+    "ma_url": "https://mcp.figma.com",
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "category": "B",
+    "rube_covers": false
+  },
+
+  "plugin-stripe": {
+    "mac_source": "claude.ai-native implied (not currently connected)",
+    "mac_type": "remote",
+    "ma_url": "https://mcp.stripe.com",
+    "ma_url_verified": true,
+    "auth_type": "static_bearer",
+    "local_token_source": "keychain:stripe-restricted-key || env:STRIPE_RESTRICTED_KEY",
+    "category": "A",
+    "rube_covers": true,
+    "notes": "Official Stripe MCP. Use restricted key, not sk_live. Rube also covers."
+  },
+
+  "plugin-telegram": {
+    "mac_source": "claude.ai-native (mcp__plugin_telegram_telegram__*)",
+    "mac_type": "remote-oauth",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "static_bearer",
+    "local_token_source": "keychain:telegram-bot-token || env:TELEGRAM_BOT_TOKEN",
+    "category": "C",
+    "rube_covers": true,
+    "notes": "Claude.ai-native plugin is a managed integration, not a standalone MCP URL. Use Rube for Telegram in MA, or deploy bot webhook separately."
+  },
+
+  "plugin-intercom": {
+    "mac_source": "claude.ai-native (mcp__plugin_intercom_*)",
+    "mac_type": "remote-oauth",
+    "ma_url": "https://mcp.intercom.com",
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "category": "B",
+    "rube_covers": false
+  },
+
+  "plugin-sumup": {
+    "mac_source": "claude.ai-native (mcp__plugin_sumup_*)",
+    "mac_type": "remote-oauth",
+    "ma_url": null,
+    "ma_url_verified": false,
+    "auth_type": "mcp_oauth",
+    "category": "B",
+    "rube_covers": false,
+    "notes": "SumUp MCP — check if you actually use this. May drop."
+  },
+
+  "plugin-supabase-native": {
+    "mac_source": "claude.ai-native (mcp__plugin_supabase_*)",
+    "mac_type": "remote-oauth",
+    "ma_url": "https://mcp.supabase.com/mcp",
+    "ma_url_verified": true,
+    "auth_type": "mcp_oauth_or_bearer",
+    "category": "D",
+    "rube_covers": false,
+    "superseded_by": "supabase-agents AND supabase-content-engine",
+    "notes": "Direct per-project URLs already defined above. Skip generic."
+  }
+}
