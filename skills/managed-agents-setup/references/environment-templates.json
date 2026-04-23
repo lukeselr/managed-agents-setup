@@ -1,0 +1,59 @@
+{
+  "primary": {
+    "name": "primary",
+    "config": {
+      "type": "cloud",
+      "networking": {"type": "unrestricted"},
+      "packages": {
+        "pip": ["anthropic", "httpx", "python-dotenv", "supabase", "requests"],
+        "apt": ["curl", "jq", "git"],
+        "npm": []
+      }
+    }
+  },
+  "full-stack": {
+    "name": "full-stack",
+    "config": {
+      "type": "cloud",
+      "networking": {"type": "unrestricted"},
+      "packages": {
+        "pip": ["anthropic", "httpx", "python-dotenv", "supabase", "requests", "beautifulsoup4", "pandas", "playwright"],
+        "apt": ["curl", "jq", "git", "chromium-browser", "libnss3", "libatk-bridge2.0-0"],
+        "npm": ["@anthropic-ai/sdk", "playwright"]
+      }
+    }
+  },
+  "locked-down": {
+    "name": "locked-down",
+    "config": {
+      "type": "cloud",
+      "networking": {
+        "type": "limited",
+        "allowed_hosts": [
+          "api.anthropic.com",
+          "mcp.gohighlevel.com",
+          "mcp.supabase.com"
+        ],
+        "allow_mcp_servers": true,
+        "allow_package_managers": false
+      },
+      "packages": {
+        "pip": ["anthropic", "httpx"],
+        "apt": ["curl", "jq"],
+        "npm": []
+      }
+    }
+  },
+  "content-engine": {
+    "name": "content-engine",
+    "config": {
+      "type": "cloud",
+      "networking": {"type": "unrestricted"},
+      "packages": {
+        "pip": ["anthropic", "httpx", "pillow", "moviepy", "openai-whisper"],
+        "apt": ["curl", "jq", "ffmpeg", "imagemagick"],
+        "npm": ["@anthropic-ai/sdk"]
+      }
+    }
+  }
+}
